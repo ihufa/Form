@@ -98,7 +98,7 @@ const greenTick = <InlineSVG src={tick} />
 const redX = <InlineSVG src={cancel} />
 
 const validateName = name => {
-  if( name.length < 5 ) {
+  if( name.length < 5 && !name.match(/\d/) ) {
     return {
       jsx: null,
       bool: false
@@ -181,7 +181,7 @@ return mm + '-' + dd + '-' + yyyy;
 
   return (
     <div className="App">
-      <h2>Registrering af banekompetencer (RBK) </h2>
+      <h2>Registrering af Banekompetencer (RBK) </h2>
       <div className='form'>
           <b>Dato</b>
           <input maxlength="10" className="input-dato" placeholder="DD-MM-ÅÅÅÅ" value={state.dato} name="dato" onChange={onChange} >
@@ -286,7 +286,7 @@ return mm + '-' + dd + '-' + yyyy;
           <textarea className="input-bemarkninger" placeholder="Eventuelle bemærkninger" name="bemaerkninger" onChange={onChange} >
           </textarea>
         </div>
-        <div className='App'>
+        <div className='Form'>
           <button onClick={onSubmit}>
             <h4>Insend</h4>
           </button>
