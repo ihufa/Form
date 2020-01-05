@@ -18,7 +18,7 @@ const [state, setState] = useState({
   dato: findToday(),
   navn: 'Vælg',
   medarbejdernummer: '',
-  jernbanevirksomhed: 'Vælg',
+  jernbanevirksomhed: 'Vælg jernbanevirksomhed',
   modtagetvirksomhedsuddannelse: false,
   uddannelsegivetaf: 'Vælg',
   SR1: false,
@@ -36,7 +36,7 @@ const [state, setState] = useState({
   straekning3: 'Vælg strækning',
   straekning4: 'Vælg strækning',
   straekning5: 'Vælg strækning',
-  timer: 'Vælg',
+  timer: '',
   bemaerkninger: 'Vælg'
 })
 
@@ -49,7 +49,17 @@ const onSubmit = e => {
   }
 }
 const arrayToCSV = (obj) => {
-  return JSON.stringify(obj)
+  let filteredState = {...obj}
+  const keys = Object.keys(filteredState)
+  for(let i = 0; i<keys.length; i++) {
+    if(filteredState[keys[i]] === 'Vælg' || filteredState[keys[i]] === 'Vælg jernbanevirksomhed' || filteredState[keys[i]] === 'Vælg station' || filteredState[keys[i]] === 'Vælg trolje' || filteredState[keys[i]] === 'Vælg strækning') {
+      filteredState[keys[i]] = undefined
+    }
+  }
+  console.log(filteredState)
+  let string = JSON.stringify(filteredState, null, 1)
+  return string
+
 }
 
 const onChange = e => {
@@ -106,7 +116,7 @@ const validateName = name => {
   }
   if( name.match(/\d/) ) {
   return {
-    jsx: <>{redX}<p>Navn må ikke indeholde tal</p></>,
+    jsx: <>{redX}<p className="error-message" >Navn må ikke indeholde tal</p></>,
     bool: false
   }
   } else {
@@ -131,7 +141,7 @@ const validateDate = date => {
     }
   } else {
     return {
-      jsx: <>{redX}<p>Forkert dato format, brug dd-mm-åååå</p></>,
+      jsx: <>{redX}<p className="error-message" >Forkert dato format, brug dd-mm-åååå</p></>,
       bool: false
     }
   }
@@ -151,21 +161,29 @@ const validateMedarbejderNummer = nummer => {
     }
   } else {
     return {
-      jsx: <>{redX}<p>Medarbejdernummer består af 4 cifre</p></>,
+      jsx: <>{redX}<p className="error-message" >Medarbejdernummer påkrævet</p></>,
       bool: false
     }
   }
 }
 
 const validateTimer = timer => {
-  if ( state.timer.match(/\d{1,}/) ) {
+  if (state.timer.length < 1) {
+    return {
+    jsx: null,
+    bool: false
+  }
+}
+  if(timer.match(/,/))
+  setState({...state, timer: state.timer.replace(',','.')})
+  if (state.timer.length > 0 && !(state.timer > 24) && !(state.timer < 0) ) {
     return {
       jsx: greenTick,
       bool: true
     }
   } else {
     return {
-      jsx: null,
+      jsx: <>{redX}<p className="error-message" >Maks 24 timer</p></>,
       bool: false
     }
   }
@@ -184,7 +202,7 @@ return mm + '-' + dd + '-' + yyyy;
       <h2>Registrering af Banekompetencer (RBK) </h2>
       <div className='form'>
           <b>Dato</b>
-          <input maxlength="10" className="input-dato" placeholder="DD-MM-ÅÅÅÅ" value={state.dato} name="dato" onChange={onChange} >
+          <input maxLength="10" className="input-dato" placeholder="DD-MM-ÅÅÅÅ" value={state.dato} name="dato" onChange={onChange} >
           </input>
           {validateDate(state.dato).jsx}
         </div>
@@ -196,7 +214,7 @@ return mm + '-' + dd + '-' + yyyy;
         </div>
         <div className='form'>
           <b>Medarbejdernummer</b>
-          <input maxlength="4" className="input-medarbejdernummer" placeholder="F.eks. 1234" name="medarbejdernummer" onChange={onChange} >
+          <input type="number" maxLength="4" className="input-medarbejdernummer" placeholder="F.eks. 1234" name="medarbejdernummer" onChange={onChange} >
           </input>
           {validateMedarbejderNummer(state.medarbejdernummer).jsx}
         </div>
@@ -226,22 +244,23 @@ return mm + '-' + dd + '-' + yyyy;
           </input>
           <span>Lokomotivfører</span>
         </div>
-        {(state.SR1 || state.SR2 || state.rangerleder) && <>
         <div className='form'>
           <h4>Jernbanevirksomhed?</h4>
-          <Dropdown label="jernbanevirksomhed" options={stationOptions} onChange={onChangeJernbaneVirksomhed} value={state.jernbanevirksomhed} placeholder="Select an option" />
+          <Dropdown label="jernbanevirksomhed" options={jernbaneVirksomhedOptions} onChange={onChangeJernbaneVirksomhed} value={state.jernbanevirksomhed} placeholder="Select an option" />
         </div>
+        {(state.SR1 || state.SR2 || state.rangerleder) && <>
         <div className='form'>
             <h4>Virksomhedsuddannelse</h4>
           <input name="modtagetvirksomhedsuddannelse" type="checkbox" onChange={onChangeCheckBox} >
           </input>
-          <span>Modtaget</span>
+          <span className="margin">Modtaget</span>
           {state.modtagetvirksomhedsuddannelse &&
-          <p>
-          <span>Givet af         </span>
+          <div className="form" >
+          <p className="margin" >Givet af</p>
           <input className="input-givet-af" placeholder="Fulde navn" name="uddannelsegivetaf" onChange={onChange} >
           </input>
-          </p>}
+          {validateName(state.uddannelsegivetaf).jsx}
+          </div>}
         </div>
           <div className='form'>
           <Dropdown options={stationOptions} onChange={onChangeStation1} value={state.station1} placeholder="Select an option" />
@@ -277,7 +296,7 @@ return mm + '-' + dd + '-' + yyyy;
           </div></>}
           <div className='form'>
           <b>Antal kørte timer</b>
-          <input className="input-timer" placeholder="F.eks. 5.5" name="timer" onChange={onChange} >
+          <input type="number" min="1" max="24" className="input-timer" placeholder="" name="timer" onChange={onChange} >
           </input>
           {validateTimer(state.timer).jsx}
         </div>
