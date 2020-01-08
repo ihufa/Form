@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
@@ -7,18 +7,19 @@ import InlineSVG from 'svg-inline-react';
 // SVGs
 import { tick } from './tick'
 import { cancel } from './cancel'
+import { question } from './question'
 
 function App() {
 const stationOptions = ['vælg station', 'stationA', 'stationB', 'stationC']
 const straekningOptions = ['Vælg strækning','station1','station2','station3']
-const jernbaneVirksomhedOptions = ['Vælg jernbanevirksomhed', 'Banedanmark', 'A', 'B']
+const infrastrukturforvalterOptions = ['Vælg infrastrukturforvalter', 'Banedanmark', 'Aarhus letbane']
 const troljeoptions = ['Vælg trolje','trolje1','trolje2','trolje3']
 
 const [state, setState] = useState({
-  dato: findToday(),
+  dato: findToday('dd-mm-yyyy'),
   navn: 'Vælg',
   medarbejdernummer: '',
-  jernbanevirksomhed: 'Vælg jernbanevirksomhed',
+  infrastrukturforvalter: 'Vælg infrastrukturforvalter',
   modtagetvirksomhedsuddannelse: false,
   uddannelsegivetaf: 'Vælg',
   SR1: false,
@@ -39,6 +40,7 @@ const [state, setState] = useState({
   timer: '',
   bemaerkninger: 'Vælg'
 })
+const [ showInfo, setShowInfo ] = useState(false)
 
 const onSubmit = e => {
   if(validateDate(state.dato).bool && validateName(state.navn).bool && validateMedarbejderNummer(state.medarbejdernummer).bool && validateTimer(state.timer).bool) {
@@ -52,7 +54,7 @@ const arrayToCSV = (obj) => {
   let filteredState = {...obj}
   const keys = Object.keys(filteredState)
   for(let i = 0; i<keys.length; i++) {
-    if(filteredState[keys[i]] === 'Vælg' || filteredState[keys[i]] === 'Vælg jernbanevirksomhed' || filteredState[keys[i]] === 'Vælg station' || filteredState[keys[i]] === 'Vælg trolje' || filteredState[keys[i]] === 'Vælg strækning') {
+    if(filteredState[keys[i]] === 'Vælg' || filteredState[keys[i]] === 'Vælg infrastrukturforvalter' || filteredState[keys[i]] === 'Vælg station' || filteredState[keys[i]] === 'Vælg trolje' || filteredState[keys[i]] === 'Vælg strækning') {
       filteredState[keys[i]] = undefined
     }
   }
@@ -60,6 +62,10 @@ const arrayToCSV = (obj) => {
   let string = JSON.stringify(filteredState, null, 1)
   return string
 
+}
+const toggleShowInfo = e => {
+  e.preventDefault()
+  setShowInfo(!showInfo)
 }
 
 const onChange = e => {
@@ -70,8 +76,8 @@ const onChangeCheckBox = e => {
   setState({...state, [e.target.name]:e.target.checked})
 }
 
-const onChangeJernbaneVirksomhed = e => {
-  setState({...state, jernbanevirksomhed:e.value})
+const onChangeinfrastrukturforvalter = e => {
+  setState({...state, infrastrukturforvalter:e.value})
 }
 const onChangeStation1 = e => {
   setState({...state, station1:e.value})
@@ -106,6 +112,7 @@ const onChangeStraekning5 = e => {
 
 const greenTick = <InlineSVG src={tick} />
 const redX = <InlineSVG src={cancel} />
+const questionMark = <InlineSVG className="questionmark" src={question} />
 
 const validateName = name => {
   if( name.length < 5 && !name.match(/\d/) ) {
@@ -134,16 +141,22 @@ const validateDate = date => {
       bool: false
     }
   }
-  if( date.match(/^\d{2}-\d{2}-\d{4}$/) ) {
-    return {
-      jsx: greenTick,
-      bool: true
-    }
-  } else {
+  if( !date.match(/^\d{2}-\d{2}-\d{4}$/) )  {
     return {
       jsx: <>{redX}<p className="error-message" >Forkert dato format, brug dd-mm-åååå</p></>,
       bool: false
     }
+  }
+  if( compareDates(date, findTomorrow('yyyy-mm-dd'))) {
+    return {
+      jsx: <>{redX}<p className="error-message" >Dato må ikke være i fremtiden</p></>,
+      bool: false
+    }
+  } else {
+      return {
+        jsx: greenTick,
+        bool: true
+      }
   }
 }
 
@@ -154,7 +167,7 @@ const validateMedarbejderNummer = nummer => {
       bool: false
     }
   }
-  if( nummer.match(/^\d{4}$/) ) {
+  if( nummer.match(/^\d{4,5}$/) ) {
     return {
       jsx: greenTick,
       bool: true
@@ -189,13 +202,41 @@ const validateTimer = timer => {
   }
 }
 
-function findToday() {
+function findToday(format) {
 let today = new Date();
 const dd = String(today.getDate()).padStart(2, '0');
 const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 const yyyy = today.getFullYear();
-return mm + '-' + dd + '-' + yyyy;
+  if(format === 'dd-mm-yyyy') {
+  return dd + '-' + mm + '-' + yyyy;
+  }
+  if(format === 'yyyy-mm-dd') {
+  return yyyy + '-' + mm + '-' + dd;
+  }
 }
+function findTomorrow(format) {
+  let today = new Date(Date.now()+86400000);
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  const yyyy = today.getFullYear();
+    if(format === 'dd-mm-yyyy') {
+    return dd + '-' + mm + '-' + yyyy;
+    }
+    if(format === 'yyyy-mm-dd') {
+    return yyyy + '-' + mm + '-' + dd;
+    }
+  }
+  function compareDates(dateFirstDate, yearFirstDate) {
+    //convert dateFirstDate from dd-mm-yyyy to yyyy-mm-dd
+    let datesArray = dateFirstDate.split('-')
+    let yearFirstArray = []
+    yearFirstArray[0] = datesArray[2]
+    yearFirstArray[1] = datesArray[1]
+    yearFirstArray[2] = datesArray[0]
+    let convertedDate = yearFirstArray.join('-')
+    console.log(convertedDate, yearFirstDate)
+    return convertedDate > yearFirstDate
+  }
 
   return (
     <div className="App">
@@ -214,7 +255,7 @@ return mm + '-' + dd + '-' + yyyy;
         </div>
         <div className='form'>
           <b>Medarbejdernummer</b>
-          <input type="number" maxLength="4" className="input-medarbejdernummer" placeholder="F.eks. 1234" name="medarbejdernummer" onChange={onChange} >
+          <input type="number" maxLength="4" className="input-medarbejdernummer" placeholder="4-5 cifre" name="medarbejdernummer" onChange={onChange} >
           </input>
           {validateMedarbejderNummer(state.medarbejdernummer).jsx}
         </div>
@@ -244,11 +285,12 @@ return mm + '-' + dd + '-' + yyyy;
           </input>
           <span>Lokomotivfører</span>
         </div>
-        <div className='form'>
-          <h4>Jernbanevirksomhed?</h4>
-          <Dropdown label="jernbanevirksomhed" options={jernbaneVirksomhedOptions} onChange={onChangeJernbaneVirksomhed} value={state.jernbanevirksomhed} placeholder="Select an option" />
-        </div>
-        {(state.SR1 || state.SR2 || state.rangerleder) && <>
+        {(state.SR1 || state.SR2) && <div className='form'>
+          <span className="h4span">Infrastrukturforvalter?</span> <span onClick={toggleShowInfo} >{questionMark}</span>
+          {showInfo && <p className="info">Hvis du arbejder på Århus letbane, vælg Århus Letbane, ellers vælg Banedanmark.</p>}
+          <Dropdown label="infrastrukturforvalter" options={infrastrukturforvalterOptions} onChange={onChangeinfrastrukturforvalter} value={state.infrastrukturforvalter} placeholder="Select an option" />
+        </div>}
+        {(state.SR1 || state.SR2 || state.rangerleder || state.lokomotivforer) && <>
         <div className='form'>
             <h4>Virksomhedsuddannelse</h4>
           <input name="modtagetvirksomhedsuddannelse" type="checkbox" onChange={onChangeCheckBox} >
@@ -262,44 +304,57 @@ return mm + '-' + dd + '-' + yyyy;
           {validateName(state.uddannelsegivetaf).jsx}
           </div>}
         </div>
+          </>}
+          {(state.rangerleder || state.lokomotivforer) && <>
           <div className='form'>
+          <h4>Stationer</h4>
           <Dropdown options={stationOptions} onChange={onChangeStation1} value={state.station1} placeholder="Select an option" />
           </div>
+          {state.station1 !== 'Vælg station' &&
           <div className='form'>
-          <Dropdown options={stationOptions} disabled={state.station1 === 'Vælg station'} onChange={onChangeStation2} value={state.station2} placeholder="Select an option" />
-          </div>
+          <Dropdown options={stationOptions} onChange={onChangeStation2} value={state.station2} placeholder="Select an option" />
+          </div>}
+          {state.station2 !== 'Vælg station' &&
           <div className='form'>
-          <Dropdown options={stationOptions} disabled={state.station2 === 'Vælg station'} onChange={onChangeStation3} value={state.station3} placeholder="Select an option" />
-          </div>
+          <Dropdown options={stationOptions} onChange={onChangeStation3} value={state.station3} placeholder="Select an option" />
+          </div>}
         </>}
         {state.lokomotivforer && <>
           <div className='form'>
+          <h4>Litra</h4>
           <Dropdown options={troljeoptions} onChange={onChangeTrolje1} value={state.trolje1} placeholder="Select an option" />
           </div>
+          {state.trolje1 !== 'Vælg trolje' &&
           <div className='form'>
-          <Dropdown options={troljeoptions} disabled={state.trolje1 === 'Vælg trolje'} onChange={onChangeTrolje2} value={state.trolje2} placeholder="Select an option" />
-          </div>
+          <Dropdown options={troljeoptions} onChange={onChangeTrolje2} value={state.trolje2} placeholder="Select an option" />
+          </div>}
           <div className='form'>
+          <h4>Strækninger</h4>
           <Dropdown options={straekningOptions} onChange={onChangeStraekning1} value={state.straekning1} placeholder="Select an option" />
           </div>
+          {state.straekning1 !== 'Vælg strækning' &&
           <div className='form'>
-          <Dropdown options={straekningOptions} disabled={state.straekning1 === 'Vælg strækning'} onChange={onChangeStraekning2} value={state.straekning2} placeholder="Select an option" />
-          </div>
+          <Dropdown options={straekningOptions} onChange={onChangeStraekning2} value={state.straekning2} placeholder="Select an option" />
+          </div>}
+          {state.straekning2 !== 'Vælg strækning' &&
           <div className='form'>
-          <Dropdown options={straekningOptions} disabled={state.straekning2 === 'Vælg strækning'} onChange={onChangeStraekning3} value={state.straekning3} placeholder="Select an option" />
-          </div>
+          <Dropdown options={straekningOptions} onChange={onChangeStraekning3} value={state.straekning3} placeholder="Select an option" />
+          </div>}
+          {state.straekning3 !== 'Vælg strækning' &&
           <div className='form'>
-          <Dropdown options={straekningOptions} disabled={state.straekning3 === 'Vælg strækning'} onChange={onChangeStraekning4} value={state.straekning4} placeholder="Select an option" />
-          </div>
+          <Dropdown options={straekningOptions} onChange={onChangeStraekning4} value={state.straekning4} placeholder="Select an option" />
+          </div>}
+          {state.straekning4 !== 'Vælg strækning' &&
           <div className='form'>
-          <Dropdown options={straekningOptions} disabled={state.straekning4 === 'Vælg strækning'} onChange={onChangeStraekning5} value={state.straekning5} placeholder="Select an option" />
-          </div></>}
-          <div className='form'>
+          <Dropdown options={straekningOptions} onChange={onChangeStraekning5} value={state.straekning5} placeholder="Select an option" />
+        </div>}
+        </>}
+          {state.lokomotivforer && <div className='form'>
           <b>Antal kørte timer</b>
           <input type="number" min="1" max="24" className="input-timer" placeholder="" name="timer" onChange={onChange} >
           </input>
           {validateTimer(state.timer).jsx}
-        </div>
+        </div>}
           <div className='form'>
           <b>Bemærkninger</b>
           <textarea className="input-bemarkninger" placeholder="Eventuelle bemærkninger" name="bemaerkninger" onChange={onChange} >
