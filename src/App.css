@@ -111,3 +111,8 @@ svg {
 .error-message {
   color: red;
 }
+
+.info {
+  font-size: 0.85rem;
+  color: darkorange;
+}
