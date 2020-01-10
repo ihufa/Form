@@ -316,8 +316,8 @@ const yyyy = today.getFullYear();
 }
 function findTomorrow(format) {
   let today = new Date(Date.now()+86400000);
-  const dd = String(today.getDate()).padStart(2, '0');
-  const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  const dd = padStartPolyfill(today.getDate());
+  const mm = padStartPolyfill(today.getMonth() + 1) // January is 0!
   const yyyy = today.getFullYear();
     if(format === 'dd-mm-yyyy') {
     return dd + '-' + mm + '-' + yyyy;
