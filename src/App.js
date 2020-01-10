@@ -111,77 +111,77 @@ const onChangeMedarbejderNummer = e => {
   } 
 }
 const onChangeinfrastrukturforvalter = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, infrastrukturforvalter:undefined})
     return
   }
   setState({...state, infrastrukturforvalter:e})
 }
 const onChangeStation1 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, station1:undefined})
     return
   }
   setState({...state, station1:e})
 }
 const onChangeStation2 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, station2:undefined})
     return
   }
   setState({...state, station2:e})
 }
 const onChangeStation3 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, station3:undefined})
     return
   }
   setState({...state, station3:e})
 }
 const onChangeTrolje1 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, trolje1:undefined})
     return
   }
   setState({...state, trolje1:e})
 }
 const onChangeTrolje2 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, trolje2:undefined})
     return
   }
   setState({...state, trolje2:e})
 }
 const onChangeStraekning1 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, straekning1:undefined})
     return
   }
   setState({...state, straekning1:e})
 }
 const onChangeStraekning2 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, straekning2:undefined})
     return
   }
   setState({...state, straekning2:e})
 }
 const onChangeStraekning3 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, straekning3:undefined})
     return
   }
   setState({...state, straekning3:e})
 }
 const onChangeStraekning4 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, straekning4:undefined})
     return
   }
   setState({...state, straekning4:e})
 }
 const onChangeStraekning5 = e => {
-  if(e.label.substring(0,4) === 'Vælg') {
+  if(e.label.substr(0,4) === 'Vælg') {
     setState({...state, straekning5:undefined})
     return
   }
@@ -294,11 +294,18 @@ const validateTimer = timer => {
     }
   }
 }
+function padStartPolyfill(date) {
+  if(date < 10) {
+    return '0'.concat(date)
+  } else {
+    return date
+  }
+}
 
 function findToday(format) {
 let today = new Date();
-const dd = String(today.getDate()).padStart(2, '0');
-const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+const dd = padStartPolyfill(today.getDate());
+const mm = padStartPolyfill(today.getMonth() + 1) // January is 0!
 const yyyy = today.getFullYear();
   if(format === 'dd-mm-yyyy') {
   return dd + '-' + mm + '-' + yyyy;
