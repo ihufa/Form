@@ -85,15 +85,14 @@ function App() {
 
   const onSubmit = (e) => {
     if (
-      // validateDate(state.dato).bool &&
-      // validateName(state.navn).bool &&
-      // validateMedarbejderNummer(state.medarbejdernummer).bool &&
-      // state.SR1 |
-      //   state.SR2 |
-      //   state.maskinforer |
-      //   state.rangerleder |
-      //   state.lokomotivforer
-      true
+      validateDate(state.dato).bool &&
+      validateName(state.navn).bool &&
+      validateMedarbejderNummer(state.medarbejdernummer).bool &&
+      state.SR1 |
+        state.SR2 |
+        state.maskinforer |
+        state.rangerleder |
+        state.lokomotivforer
     ) {
       const finalString = line1.concat("%0D%0A").concat(createDataLine2String())
       console.log(finalString)
