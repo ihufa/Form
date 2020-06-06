@@ -1,9 +1,9 @@
 * {
   margin: 0;
-  font-family: 'Roboto';
+  font-family: "Roboto";
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-       box-sizing: border-box;
+  box-sizing: border-box;
 }
 body {
   margin: 5px;
@@ -16,8 +16,8 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
-  -moz-appearance:textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .App {
@@ -77,7 +77,7 @@ svg {
   padding: 8px;
 }
 .input-bemarkninger:focus {
-  height:75px;
+  height: 75px;
 }
 .input-navn {
   width: 220px;
@@ -86,18 +86,18 @@ svg {
 .h4span {
   margin-bottom: 5px;
   margin-top: 5px;
-    margin-block-start: 1.33em;
-    margin-block-end: 1.33em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    font-weight: bold; 
+  margin-block-start: 1.33em;
+  margin-block-end: 1.33em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
 }
 svg {
   height: 22px;
   width: 22px;
 }
 .form {
-  display:block;
+  display: block;
   max-width: 600px;
   text-align: left;
   margin-bottom: 10px;
@@ -115,4 +115,14 @@ svg {
 .info {
   font-size: 0.85rem;
   color: darkorange;
+}
+
+.rightfloating {
+  display: inline-block;
+  float: right;
+}
+
+.kms {
+  padding: 10px;
+  margin-bottom: 40px;
 }
