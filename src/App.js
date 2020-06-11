@@ -55,10 +55,10 @@ function App() {
   const [showInfo, setShowInfo] = useState(false)
 
   const line1 =
-    "Antal kørte timer%09Bemærkninger%09Dato%09Faldende KM%09Faldende KM_2%09Faldende KM_3%09Faldende KM_4%09Faldende KM_5%09Inf_Forvalt%09Lokomotivfører%09Medarbejdernummer%09Navn%09Navn_Virksomhedsudd%09Rangerleder%09SR1%09SR2%09Sporkyndigsporteknik%09Stigende KM%09Stigende KM_2%09Stigende KM_3%09Stigende KM_4%09Stigende KM_5%09Virksomhedsudd%09Vælg en station 1%09Vælg en station 2%09Vælg en station 3%09Vælg en strækning 1%09Vælg en strækning 2%09Vælg en strækning 3%09Vælg en strækning 4%09Vælg en strækning 5%09Vælg en trolje 1%09Vælg en trolje 2"
+    "Antal kørte timer, Bemærkninger, Dato, Faldende KM, Faldende KM_2, Faldende KM_3, Faldende KM_4, Faldende KM_5, Inf_Forvalt, Lokomotivfører, Medarbejdernummer, Navn, Navn_Virksomhedsudd, Rangerleder, SR1, SR2, Sporkyndigsporteknik, Stigende KM, Stigende KM_2, Stigende KM_3, Stigende KM_4, Stigende KM_5, Virksomhedsudd, Vælg en station 1, Vælg en station 2, Vælg en station 3, Vælg en strækning 1, Vælg en strækning 2, Vælg en strækning 3, Vælg en strækning 4, Vælg en strækning 5, Vælg en trolje 1, Vælg en trolje 2"
   const createDataLine2String = () => {
     let data = ""
-    const lengthOfStateObj = Object.keys(state).length - 1
+    const lengthOfStateObj = Object.keys(state).length
     console.log(Object.keys(state))
     for (let i = 0; i < lengthOfStateObj; i++) {
       let value = state[Object.keys(state)[i]]
@@ -71,13 +71,13 @@ function App() {
           data = data.concat("Off")
         }
       } else if (!value) {
-        data = data.concat("%09Off")
+        data = data.concat(", Off")
       } else if (value === true) {
-        data = data.concat("%09On")
+        data = data.concat(", On")
       } else if (typeof value === "object") {
-        data = data.concat(`%09${value.value}`)
+        data = data.concat(`, ${value.value}`)
       } else {
-        data = data.concat(`%09${value}`)
+        data = data.concat(`, ${value}`)
       }
     }
     return data
