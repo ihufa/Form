@@ -55,7 +55,7 @@ function App() {
   const [showInfo, setShowInfo] = useState(false)
 
   const line1 =
-    "Antal kørte timer, Bemærkninger, Dato, Faldende KM, Faldende KM_2, Faldende KM_3, Faldende KM_4, Faldende KM_5, Inf_Forvalt, Lokomotivfører, Medarbejdernummer, Navn, Navn_Virksomhedsudd, Rangerleder, SR1, SR2, Sporkyndigsporteknik, Stigende KM, Stigende KM_2, Stigende KM_3, Stigende KM_4, Stigende KM_5, Virksomhedsudd, Vælg en station 1, Vælg en station 2, Vælg en station 3, Vælg en strækning 1, Vælg en strækning 2, Vælg en strækning 3, Vælg en strækning 4, Vælg en strækning 5, Vælg en trolje 1, Vælg en trolje 2"
+    "Antal kørte timer, Bemærkninger, Dato, Faldende KM, Faldende KM_2, Faldende KM_3, Faldende KM_4, Faldende KM_5, Inf_Forvalt, Lokomotivfører, Medarbejdernummer, Navn, Navn_Virksomhedsudd, Rangerleder, SR1, SR2, Sporkyndigsporteknik, Stigende KM, Stigende KM_2, Stigende KM_3, Stigende KM_4, Stigende KM_5, Virksomhedsudd, Vælg en station 1, Vælg en station 2, Vælg en station 3, Vælg en strækning 1, Vælg en strækning 2, Vælg en strækning 3, Vælg en strækning 4, Vælg en strækning 5, Vælg en trolje 1, Vælg en trolje 2, "
   const createDataLine2String = () => {
     let data = ""
     const lengthOfStateObj = Object.keys(state).length
@@ -94,7 +94,7 @@ function App() {
         state.rangerleder |
         state.lokomotivforer
     ) {
-      const finalString = line1.concat("%0D%0A").concat(createDataLine2String())
+      const finalString = line1.concat(createDataLine2String())
       console.log(finalString)
       window.open(
         `mailto:gitte.grys@outlook.dk?subject=RBK_formular123456&body=${finalString}`
