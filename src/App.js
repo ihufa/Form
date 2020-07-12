@@ -80,7 +80,7 @@ function App() {
         data = data.concat(`, ${value}`)
       }
     }
-    return data
+    return data + ","
   }
 
   const onSubmit = (e) => {
